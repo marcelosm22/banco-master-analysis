@@ -16,7 +16,7 @@ DATA_DIR_PREP = Path(__file__).resolve().parents[2] / "data" / "preparado"
 CORES_CATEGORIA = {
     "contexto": "#95a5a6",
     "financeiro": "#3498db",
-    "aquisicao": "#f39c12",
+    "aquisição": "#f39c12",
     "regulatorio": "#e67e22",
     "criminal": "#e74c3c",
     "politico": "#9b59b6",
@@ -65,7 +65,7 @@ def main():
     # Apenas eventos-chave no gráfico (marcos principais do caso)
     EVENTOS_CHAVE = [
         "Banco Master inicia fase de crescimento acelerado",
-        "BRB anuncia proposta de aquisicao",
+        "BRB anuncia proposta de aquisição",
         "Banco Central rejeita compra do Master",
         "Daniel Vorcaro preso no aeroporto",
         "Banco Central decreta liquidacao extrajudicial",
