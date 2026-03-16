@@ -127,7 +127,7 @@ def main():
           durante todo o período, enquanto os pares ficam entre 10-36 pts (Baixo/Moderado).
         - O **pico de 67 pts** ocorre em Q2/2020 (pandemia amplificou a alavancagem).
         - A partir de **2022**, o componente de **Crescimento** atinge o máximo (25 pts),
-          refletindo a explosão do ativo de R$ 20B para R$ 69B.
+          refletindo a explosão do ativo de R\$ 20B para R\$ 69B.
         - O risco era **estrutural desde 2019** (Basileia + Alavancagem), mas **se intensificou
           progressivamente** com o crescimento anormal a partir de 2022.
         """)

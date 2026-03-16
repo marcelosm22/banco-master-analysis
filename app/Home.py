@@ -81,11 +81,11 @@ def main():
     st.markdown("""
     Use o menu lateral para navegar entre as páginas:
 
+    - **Documentação** — Detalhamento do projeto, metodologia, limitações e referências
     - **Saúde Financeira** — Gráficos comparativos de indicadores ao longo do tempo
     - **Sinais de Alerta** — Heatmap de red flags e score de estresse financeiro
     - **Notícias** — Timeline interativa dos eventos do caso
     - **Predição** — Modelo de classificação de risco com árvore de decisão
-    - **Documentação** — Detalhamento do projeto, metodologia, limitações e referências
     """)
 
     st.markdown("---")
@@ -93,12 +93,12 @@ def main():
     # Contexto do caso
     st.subheader("Contexto do Caso")
     st.markdown("""
-    O **Banco Master**, sob a gestão de Daniel Vorcaro, cresceu de R$ 3 bilhões para
-    R$ 69 bilhões em ativos entre 2019 e 2025, financiado majoritariamente por CDBs
+    O **Banco Master**, sob a gestão de Daniel Vorcaro, cresceu de R\$ 3 bilhões para
+    R\$ 69 bilhões em ativos entre 2019 e 2025, financiado majoritariamente por CDBs
     com taxas acima do mercado (até 130% do CDI).
 
     Em **novembro de 2025**, o Banco Central decretou sua liquidação extrajudicial após
-    a Polícia Federal revelar uma fraude de R$ 12 bilhões. O caso é considerado o maior
+    a Polícia Federal revelar uma fraude de R\$ 12 bilhões. O caso é considerado o maior
     escândalo financeiro do Brasil desde a Operação Lava Jato.
 
     **Crimes identificados:** fraude em precatórios, lavagem de dinheiro (incluindo para

@@ -93,7 +93,7 @@ def main():
         st.subheader("🔴 Crescimento Anômalo")
         st.markdown("""
         O Ativo Total do Banco Master cresceu **22x** em 6 anos
-        (R$ 3,1B → R$ 69B), enquanto os pares cresceram em média 2-3x.
+        (R\$ 3,1B → R\$ 69B), enquanto os pares cresceram em média 2-3x.
         """)
 
         st.subheader("🔴 Dependência Extrema de Captações")
