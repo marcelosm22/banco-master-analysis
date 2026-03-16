@@ -131,20 +131,44 @@ def main():
             "Desvio": perm.importances_std,
         }).sort_values("Importância", ascending=True)
 
-        fig_fi = px.bar(
-            fi, x="Importância", y="Feature", orientation="h",
-            error_x="Desvio",
-            title="Importância das Features (Permutation Importance)",
-            color="Importância",
-            color_continuous_scale="Reds",
-        )
-        fig_fi.update_layout(height=350, showlegend=False)
-        st.plotly_chart(fig_fi, use_container_width=True)
+        # Correlação com Target
+        corr_vals = [abs(df_ds[f].corr(df_ds["Target"])) for f in features]
+        fi_corr = pd.DataFrame({
+            "Feature": [FEATURES_NOMES.get(f, f) for f in features],
+            "Correlação": corr_vals,
+        }).sort_values("Correlação", ascending=True)
 
-        st.caption(
-            "Permutation Importance mede quanto o F1 cai ao embaralhar cada feature. "
-            "Mais confiável que Gini Importance, que superestima features usadas em múltiplos splits."
-        )
+        # Dois gráficos lado a lado
+        col_pi, col_corr = st.columns(2)
+
+        with col_pi:
+            fig_fi = px.bar(
+                fi, x="Importância", y="Feature", orientation="h",
+                error_x="Desvio",
+                title="O que o Modelo Usa (Permutation Importance)",
+                color="Importância",
+                color_continuous_scale="Reds",
+            )
+            fig_fi.update_layout(height=380, showlegend=False)
+            st.plotly_chart(fig_fi, use_container_width=True)
+            st.caption(
+                "Mede quanto o F1 cai ao embaralhar cada feature. "
+                "Features não usadas na árvore ficam zeradas."
+            )
+
+        with col_corr:
+            fig_corr = px.bar(
+                fi_corr, x="Correlação", y="Feature", orientation="h",
+                title="Relevância Real (Correlação com Target)",
+                color="Correlação",
+                color_continuous_scale="Blues",
+            )
+            fig_corr.update_layout(height=380, showlegend=False)
+            st.plotly_chart(fig_corr, use_container_width=True)
+            st.caption(
+                "Correlação absoluta com o target (liquidação). "
+                "Independente do modelo — mostra a relevância geral de cada indicador."
+            )
 
     # =====================================================================
     # 2. RADAR — PERFIL COMPARATIVO
