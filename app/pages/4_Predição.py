@@ -180,7 +180,7 @@ def main():
     st.markdown("---")
     st.header("2. Importância das Features — Três Perspectivas")
 
-    col_a, col_b, col_c = st.columns(3)
+    col_a, col_b = st.columns(2)
 
     with col_a:
         fi_dt = pd.DataFrame({
@@ -208,18 +208,20 @@ def main():
         st.plotly_chart(fig_lr, use_container_width=True)
         st.caption("Todas as features contribuem — nenhuma é ignorada.")
 
-    with col_c:
-        fi_corr = pd.DataFrame({
-            "Feature": [FEATURES_NOMES.get(f, f) for f in features],
-            "Correlação": res["corr_vals"],
-        }).sort_values("Correlação", ascending=True)
+    # Correlação centralizada abaixo
+    fi_corr = pd.DataFrame({
+        "Feature": [FEATURES_NOMES.get(f, f) for f in features],
+        "Correlação": res["corr_vals"],
+    }).sort_values("Correlação", ascending=True)
 
+    _, col_center, _ = st.columns([1, 2, 1])
+    with col_center:
         fig_corr = px.bar(fi_corr, x="Correlação", y="Feature", orientation="h",
-                          title="Correlação com Target",
+                          title="Correlação com Target (independente de modelo)",
                           color="Correlação", color_continuous_scale="Blues")
         fig_corr.update_layout(height=380, showlegend=False)
         st.plotly_chart(fig_corr, use_container_width=True)
-        st.caption("Independente de qualquer modelo — relevância geral de cada indicador.")
+        st.caption("Relevância geral de cada indicador — independente de qualquer modelo.")
 
     # =====================================================================
     # 3. RADAR — PERFIL COMPARATIVO
@@ -353,36 +355,6 @@ def main():
         r3.success("**Decision Tree: NORMAL**")
     r4.metric("Prob. Risco (DT)", f"{dt_prob_risco:.1%}")
 
-    # Contribuição de cada feature na LR
-    with st.expander("Detalhamento: contribuição de cada feature (Logistic Regression)"):
-        contrib = X_input_scaled[0] * res["lr_coefs"]
-        contrib_df = pd.DataFrame({
-            "Feature": [FEATURES_NOMES.get(f, f) for f in features],
-            "Valor Informado": [slider_vals.get(f, 0) for f in features],
-            "Contribuição ao Risco": contrib,
-        }).sort_values("Contribuição ao Risco", ascending=False)
-
-        fig_contrib = px.bar(
-            contrib_df, x="Contribuição ao Risco", y="Feature", orientation="h",
-            title="Contribuição de Cada Feature para a Classificação",
-            color="Contribuição ao Risco",
-            color_continuous_scale="RdBu_r", color_continuous_midpoint=0,
-        )
-        fig_contrib.update_layout(height=350, showlegend=False)
-        st.plotly_chart(fig_contrib, use_container_width=True)
-        st.caption("Barras vermelhas (positivas) empurram para RISCO. Barras azuis (negativas) empurram para NORMAL.")
-
-    with st.expander("Comparar com valores reais do Banco Master"):
-        if not df_resumo.empty:
-            master_ult = df_resumo[df_resumo["NomeBanco"] == "Banco Master"].sort_values("AnoMes").iloc[-1]
-            st.markdown(f"""
-            **Último trimestre disponível do Master ({master_ult.get('AnoTri', '?')}):**
-            - Alavancagem: **{master_ult.get('Alavancagem', 0):.1f}x**
-            - Captações/Ativo: **{master_ult.get('CoberturaCapt', 0):.2%}**
-            - Crédito/Ativo: **{master_ult.get('CreditoSobreAtivo', 0):.2%}**
-            - ROE: **{master_ult.get('ROE', 0):.2%}**
-            - Crescimento QoQ: **{master_ult.get('CrescAtivo_QoQ', 0):.2%}**
-            """)
 
     # =====================================================================
     # 5. MATRIZ DE CONFUSÃO (Decision Tree — modelo principal)
