@@ -171,18 +171,6 @@ def main():
         simulador "E se?" influenciam o resultado.
         """)
 
-    st.subheader("4.3 Página de Predição — Seções")
-    st.markdown("""
-    A página de Predição contém 6 seções:
-
-    1. **Dois Modelos Complementares** — Métricas, árvore de decisão e coeficientes lado a lado
-    2. **Importância das Features** — Três perspectivas: Permutation (DT), Permutation (LR) e Correlação com Target
-    3. **Perfil Comparativo (Radar)** — Gráfico radar Master vs pares com seletor de período
-    4. **Simulador "E se?"** — Sliders interativos que classificam em tempo real usando Logistic Regression (todos os indicadores funcionam) e Decision Tree simultaneamente
-    5. **Matriz de Confusão** — Verdadeiros/Falsos Positivos/Negativos com detalhamento dos erros
-    6. **Limitações** — Transparência sobre as restrições de ambos os modelos
-    """)
-
     st.markdown("---")
 
     # --- Limitações ---
