@@ -127,27 +127,42 @@ def main():
     st.header("2. Perfil Comparativo — Gráfico Radar")
 
     st.markdown("""
-    Comparação do "perfil de risco" do Banco Master com a **média dos pares**
-    nos últimos trimestres disponíveis. Quanto mais o polígono vermelho se afasta
-    do azul, maior a divergência.
+    Comparação do "perfil de risco" do Banco Master com a **média dos pares**.
+    Use o seletor de período para explorar como o perfil mudou ao longo do tempo.
     """)
 
     radar_feats = ["Alavancagem", "CoberturaCapt", "CreditoSobreAtivo", "ROE", "CrescAtivo_QoQ"]
     radar_feats = [f for f in radar_feats if f in df_resumo.columns]
 
     if radar_feats:
-        # Média dos últimos 4 trimestres por banco
-        ultimos = df_resumo.sort_values("AnoMes").groupby("NomeBanco").tail(4)
+        # Seletor de período
+        trimestres_disp = sorted(df_resumo["AnoTri"].unique())
+        opcoes_periodo = {
+            "Período completo (2019–2025)": trimestres_disp,
+        }
+        # Agrupar por ano
+        for ano in sorted(df_resumo["Ano"].unique()):
+            tris_ano = sorted(df_resumo[df_resumo["Ano"] == ano]["AnoTri"].unique())
+            if tris_ano:
+                opcoes_periodo[f"Ano {ano}"] = tris_ano
 
-        master_vals = ultimos[ultimos["NomeBanco"] == "Banco Master"][radar_feats].mean()
-        pares_vals = ultimos[ultimos["NomeBanco"] != "Banco Master"][radar_feats].mean()
+        periodo_sel = st.selectbox(
+            "Selecione o período para o radar:",
+            list(opcoes_periodo.keys()),
+            index=0,
+        )
+        tris_filtro = opcoes_periodo[periodo_sel]
 
-        # Normalizar entre 0-1 para o radar (min-max do dataset inteiro)
+        df_filtrado = df_resumo[df_resumo["AnoTri"].isin(tris_filtro)]
+
+        master_vals = df_filtrado[df_filtrado["NomeBanco"] == "Banco Master"][radar_feats].mean()
+        pares_vals = df_filtrado[df_filtrado["NomeBanco"] != "Banco Master"][radar_feats].mean()
+
+        # Normalizar entre 0-1 (min-max do dataset INTEIRO para manter escala consistente)
         all_vals = df_resumo[radar_feats]
         mins = all_vals.min()
         maxs = all_vals.max()
-        ranges = maxs - mins
-        ranges = ranges.replace(0, 1)
+        ranges = (maxs - mins).replace(0, 1)
 
         master_norm = (master_vals - mins) / ranges
         pares_norm = (pares_vals - mins) / ranges
@@ -176,20 +191,23 @@ def main():
 
         fig_radar.update_layout(
             polar=dict(radialaxis=dict(visible=True, range=[0, 1])),
-            title="Perfil de Risco — Master vs Média dos Pares (últimos 4 trimestres)",
+            title=f"Perfil de Risco — Master vs Média dos Pares ({periodo_sel})",
             height=500,
             showlegend=True,
         )
         st.plotly_chart(fig_radar, use_container_width=True)
 
         # Tabela de valores reais
-        st.markdown("**Valores reais (média dos últimos 4 trimestres):**")
+        st.markdown(f"**Valores reais ({periodo_sel}):**")
         tabela = pd.DataFrame({
             "Indicador": labels,
             "Banco Master": [f"{v:.4f}" for v in master_vals.values],
             "Média dos Pares": [f"{v:.4f}" for v in pares_vals.values],
+            "Diferença": [f"{m - p:+.4f}" for m, p in zip(master_vals.values, pares_vals.values)],
         })
         st.dataframe(tabela, use_container_width=True, hide_index=True)
+
+        st.caption("Normalização min-max usa o dataset inteiro (2019–2025) para manter a escala consistente entre períodos.")
 
     # =====================================================================
     # 3. ANÁLISE "E SE?" (WHAT-IF)
