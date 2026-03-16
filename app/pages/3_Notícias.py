@@ -57,10 +57,12 @@ def main():
     cats_sel = st.sidebar.multiselect("Categorias", categorias, default=categorias)
     df_filtered = df_noticias[df_noticias["categoria"].isin(cats_sel)]
 
-    # --- Gráfico: Ativo do Master com anotações de eventos-chave ---
+    # --- Gráfico: Ativo do Master com eventos numerados ---
     st.subheader("Evolução Financeira x Eventos")
 
     fig = go.Figure()
+
+    eventos_num = df_filtered.sort_values("data").reset_index(drop=True)
 
     if not df_resumo.empty and "AtivoTotal" in df_resumo.columns:
         master = df_resumo[df_resumo["NomeBanco"] == "Banco Master"].sort_values("DataRef")
@@ -74,55 +76,61 @@ def main():
                 marker=dict(size=6),
             ))
 
-            # Eventos-chave como linhas verticais com anotação limpa
-            eventos_chave = df_filtered.sort_values("data").reset_index(drop=True)
             y_max = master["AtivoTotal"].max()
 
-            for i, (_, row) in enumerate(eventos_chave.iterrows()):
+            for i, (_, row) in enumerate(eventos_num.iterrows()):
+                num = i + 1
                 cor = CORES_CATEGORIA.get(row["categoria"], "#888888")
 
-                # Linha vertical no ponto do evento
                 fig.add_vline(
                     x=row["data"],
                     line_dash="dot",
                     line_color=cor,
                     line_width=1,
-                    opacity=0.5,
+                    opacity=0.4,
                 )
 
-                # Anotação curta (só para eventos principais)
-                # Alterna posição vertical para evitar sobreposição
-                titulo_curto = row["titulo"][:40]
-                y_pos = y_max * (0.95 - (i % 5) * 0.12)
+                # Número no topo do gráfico, alternando altura para não sobrepor
+                y_pos = y_max * (1.02 - (i % 3) * 0.08)
 
                 fig.add_annotation(
                     x=row["data"],
                     y=y_pos,
-                    text=f"<b>{titulo_curto}...</b>",
-                    showarrow=True,
-                    arrowhead=2,
-                    arrowsize=0.8,
-                    arrowcolor=cor,
-                    font=dict(size=9, color=cor),
-                    bgcolor="rgba(0,0,0,0.7)",
+                    text=f"<b>{num}</b>",
+                    showarrow=False,
+                    font=dict(size=12, color="white"),
+                    bgcolor=cor,
                     bordercolor=cor,
                     borderwidth=1,
-                    ax=30,
-                    ay=-20,
+                    borderpad=3,
+                    hovertext=f"{num}. {row['titulo']}<br>Fonte: {row['fonte']}",
                 )
 
     fig.update_layout(
         title="Ativo Total do Banco Master x Eventos do Caso",
         xaxis_title="",
-        yaxis_title="Ativo Total (R$)",
-        height=600,
+        yaxis_title="Ativo Total (R\$)",
+        height=550,
         showlegend=True,
         hovermode="x unified",
     )
 
     st.plotly_chart(fig, use_container_width=True)
 
-    st.caption("Passe o mouse sobre as anotações para mais detalhes. Linhas verticais indicam eventos relevantes.")
+    # Legenda numerada
+    st.markdown("**Legenda dos eventos:**")
+    cols_leg = st.columns(2)
+    for i, (_, row) in enumerate(eventos_num.iterrows()):
+        num = i + 1
+        cor = CORES_CATEGORIA.get(row["categoria"], "#333")
+        data_str = row["data"].strftime("%d/%m/%Y")
+        with cols_leg[i % 2]:
+            st.markdown(
+                f'<span style="background-color:{cor}; color:white; padding:1px 6px; '
+                f'border-radius:3px; font-weight:bold;">{num}</span> '
+                f'<small>[{data_str}]</small> {row["titulo"]}',
+                unsafe_allow_html=True,
+            )
 
     # --- Timeline detalhada ---
     st.markdown("---")
