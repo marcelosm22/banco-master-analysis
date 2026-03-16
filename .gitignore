@@ -23,13 +23,10 @@ env/
 Thumbs.db
 desktop.ini
 
-# Data (raw files are too large for git)
-data/bruto/*.csv
-data/preparado/*.csv
-
-# Keep the directory structure
-!data/bruto/.gitkeep
-!data/preparado/.gitkeep
+# Arquivos parciais de coleta (redundantes — já estão no consolidado)
+data/bruto/ifdata_individual.csv
+data/bruto/ifdata_parte*.csv
+data/bruto/ifdata_faltantes.csv
 
 # Temporary collection scripts
 coleta_demo.py
