@@ -62,7 +62,22 @@ def main():
 
     fig = go.Figure()
 
-    eventos_num = df_filtered.sort_values("data").reset_index(drop=True)
+    # Apenas eventos-chave no gráfico (marcos principais do caso)
+    EVENTOS_CHAVE = [
+        "Banco Master inicia fase de crescimento acelerado",
+        "BRB anuncia proposta de aquisicao",
+        "Banco Central rejeita compra do Master",
+        "Daniel Vorcaro preso no aeroporto",
+        "Banco Central decreta liquidacao extrajudicial",
+        "FGC estima perda de R",
+    ]
+
+    eventos_todos = df_filtered.sort_values("data").reset_index(drop=True)
+    eventos_graf = eventos_todos[
+        eventos_todos["titulo"].apply(
+            lambda t: any(chave in t for chave in EVENTOS_CHAVE)
+        )
+    ].reset_index(drop=True)
 
     if not df_resumo.empty and "AtivoTotal" in df_resumo.columns:
         master = df_resumo[df_resumo["NomeBanco"] == "Banco Master"].sort_values("DataRef")
@@ -78,7 +93,7 @@ def main():
 
             y_max = master["AtivoTotal"].max()
 
-            for i, (_, row) in enumerate(eventos_num.iterrows()):
+            for i, (_, row) in enumerate(eventos_graf.iterrows()):
                 num = i + 1
                 cor = CORES_CATEGORIA.get(row["categoria"], "#888888")
 
@@ -86,28 +101,47 @@ def main():
                     x=row["data"],
                     line_dash="dot",
                     line_color=cor,
-                    line_width=1,
-                    opacity=0.4,
+                    line_width=1.5,
+                    opacity=0.6,
                 )
 
-                # Número no topo do gráfico, alternando altura para não sobrepor
-                y_pos = y_max * (1.02 - (i % 3) * 0.08)
+                y_pos = y_max * (1.02 - (i % 2) * 0.10)
 
                 fig.add_annotation(
                     x=row["data"],
                     y=y_pos,
                     text=f"<b>{num}</b>",
                     showarrow=False,
-                    font=dict(size=12, color="white"),
+                    font=dict(size=13, color="white"),
                     bgcolor=cor,
                     bordercolor=cor,
                     borderwidth=1,
-                    borderpad=3,
-                    hovertext=f"{num}. {row['titulo']}<br>Fonte: {row['fonte']}",
+                    borderpad=4,
+                    hovertext=f"{num}. {row['titulo']}<br>Fonte: {row['fonte']}<br>Data: {row['data'].strftime('%d/%m/%Y')}",
                 )
 
+    # Legenda compacta dentro do gráfico
+    legenda_text = "<br>".join(
+        f"<b>{i+1}</b> — {row['titulo'][:60]}"
+        for i, (_, row) in enumerate(eventos_graf.iterrows())
+    )
+    fig.add_annotation(
+        x=0.01, y=0.99,
+        xref="paper", yref="paper",
+        text=legenda_text,
+        showarrow=False,
+        font=dict(size=10, color="#cccccc"),
+        bgcolor="rgba(0,0,0,0.6)",
+        bordercolor="#555",
+        borderwidth=1,
+        borderpad=8,
+        align="left",
+        xanchor="left",
+        yanchor="top",
+    )
+
     fig.update_layout(
-        title="Ativo Total do Banco Master x Eventos do Caso",
+        title="Ativo Total do Banco Master x Eventos-Chave",
         xaxis_title="",
         yaxis_title="Ativo Total (R\$)",
         height=550,
@@ -116,21 +150,6 @@ def main():
     )
 
     st.plotly_chart(fig, use_container_width=True)
-
-    # Legenda numerada
-    st.markdown("**Legenda dos eventos:**")
-    cols_leg = st.columns(2)
-    for i, (_, row) in enumerate(eventos_num.iterrows()):
-        num = i + 1
-        cor = CORES_CATEGORIA.get(row["categoria"], "#333")
-        data_str = row["data"].strftime("%d/%m/%Y")
-        with cols_leg[i % 2]:
-            st.markdown(
-                f'<span style="background-color:{cor}; color:white; padding:1px 6px; '
-                f'border-radius:3px; font-weight:bold;">{num}</span> '
-                f'<small>[{data_str}]</small> {row["titulo"]}',
-                unsafe_allow_html=True,
-            )
 
     # --- Timeline detalhada ---
     st.markdown("---")
