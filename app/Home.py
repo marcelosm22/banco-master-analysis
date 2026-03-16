@@ -73,7 +73,7 @@ def main():
     c1.metric("Ativo Total (Q4/2024)", "R$ 63 bi", "+74% em 1 ano")
     c2.metric("Índice de Basileia", "11,52%", "Mínimo = 11%", delta_color="inverse")
     c3.metric("Perda FGC Estimada", "R$ 41 bi", "Maior da história")
-    c4.metric("Crescimento 2019-2024", "28x", "Patrimônio Líquido")
+    c4.metric("Crescimento 2019-2025", "22x", "Ativo Total")
 
     st.markdown("---")
 
