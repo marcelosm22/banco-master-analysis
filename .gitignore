@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.eggs/
+*.egg
+
+# Virtual environments
+venv/
+.env/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Data (raw files are too large for git)
+data/bruto/*.csv
+data/preparado/*.csv
+
+# Keep the directory structure
+!data/bruto/.gitkeep
+!data/preparado/.gitkeep
+
+# Temporary collection scripts
+coleta_demo.py
+coleta_parte1.py
+coleta_parte2.py
+coleta_parte3.py
+coleta_capital.py
+coleta_faltantes.py
+
+# Claude
+.claude/
