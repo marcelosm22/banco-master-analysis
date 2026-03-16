@@ -106,19 +106,45 @@ def main():
             st.markdown("**Árvore de Decisão**")
             st.code(metricas["arvore_texto"], language="text")
 
-        fi = pd.DataFrame([
-            {"Feature": FEATURES_NOMES.get(k, k), "Importância": v}
-            for k, v in metricas["feature_importance"].items()
-        ]).sort_values("Importância", ascending=True)
+        # Permutation Importance (mais confiável que Gini)
+        from sklearn.inspection import permutation_importance
+        modelo = resultado["modelo"]
+        features = resultado["features"]
+
+        # Montar X, y a partir do dataset
+        import sys
+        sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
+        from predicao.modelo_risco import carregar_dados, preparar_dataset
+        df_r, df_c = carregar_dados()
+        df_ds, feats_ds = preparar_dataset(df_r, df_c)
+        X_perm = df_ds[feats_ds].values
+        y_perm = df_ds["Target"].values
+
+        perm = permutation_importance(
+            modelo, X_perm, y_perm,
+            n_repeats=30, random_state=42, scoring="f1",
+        )
+
+        fi = pd.DataFrame({
+            "Feature": [FEATURES_NOMES.get(f, f) for f in features],
+            "Importância": perm.importances_mean,
+            "Desvio": perm.importances_std,
+        }).sort_values("Importância", ascending=True)
 
         fig_fi = px.bar(
             fi, x="Importância", y="Feature", orientation="h",
-            title="Importância das Features",
+            error_x="Desvio",
+            title="Importância das Features (Permutation Importance)",
             color="Importância",
             color_continuous_scale="Reds",
         )
         fig_fi.update_layout(height=350, showlegend=False)
         st.plotly_chart(fig_fi, use_container_width=True)
+
+        st.caption(
+            "Permutation Importance mede quanto o F1 cai ao embaralhar cada feature. "
+            "Mais confiável que Gini Importance, que superestima features usadas em múltiplos splits."
+        )
 
     # =====================================================================
     # 2. RADAR — PERFIL COMPARATIVO
