@@ -34,7 +34,7 @@ def main():
     3. **Extração** — Parsing e normalização dos dados brutos
     4. **Preparação** — Cálculo de indicadores derivados e score de estresse
     5. **Exibição** — Dashboard interativo (esta página)
-    6. **Predição** — Modelo de classificação de risco (Decision Tree)
+    6. **Predição** — Modelos de classificação de risco (Decision Tree + Logistic Regression)
     """)
 
     st.markdown("---")
@@ -85,7 +85,7 @@ def main():
     - **Saúde Financeira** — Gráficos comparativos de indicadores ao longo do tempo
     - **Sinais de Alerta** — Heatmap de red flags e score de estresse financeiro
     - **Notícias** — Timeline interativa dos eventos do caso
-    - **Predição** — Modelo de classificação de risco com árvore de decisão
+    - **Predição** — Dois modelos de classificação de risco, simulador interativo e matriz de confusão
     """)
 
     st.markdown("---")
@@ -94,7 +94,7 @@ def main():
     st.subheader("Contexto do Caso")
     st.markdown("""
     O **Banco Master**, sob a gestão de Daniel Vorcaro, cresceu de R\$ 3 bilhões para
-    R\$ 69 bilhões em ativos entre 2019 e 2025, financiado majoritariamente por CDBs
+    R\$ 68 bilhões em ativos entre 2019 e 2025, financiado majoritariamente por CDBs
     com taxas acima do mercado (até 130% do CDI).
 
     Em **novembro de 2025**, o Banco Central decretou sua liquidação extrajudicial após
