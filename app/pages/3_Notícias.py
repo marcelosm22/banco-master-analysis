@@ -120,26 +120,6 @@ def main():
                     hovertext=f"{num}. {row['titulo']}<br>Fonte: {row['fonte']}<br>Data: {row['data'].strftime('%d/%m/%Y')}",
                 )
 
-    # Legenda compacta dentro do gráfico
-    legenda_text = "<br>".join(
-        f"<b>{i+1}</b> — {row['titulo'][:60]}"
-        for i, (_, row) in enumerate(eventos_graf.iterrows())
-    )
-    fig.add_annotation(
-        x=0.01, y=0.99,
-        xref="paper", yref="paper",
-        text=legenda_text,
-        showarrow=False,
-        font=dict(size=10, color="#cccccc"),
-        bgcolor="rgba(0,0,0,0.6)",
-        bordercolor="#555",
-        borderwidth=1,
-        borderpad=8,
-        align="left",
-        xanchor="left",
-        yanchor="top",
-    )
-
     fig.update_layout(
         title="Ativo Total do Banco Master x Eventos-Chave",
         xaxis_title="",
