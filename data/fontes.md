@@ -39,19 +39,19 @@ Estrategia: baixar relatorio completo e filtrar localmente por CodInst.
 TipoInstituicao=3 retorna dados por CNPJ individual.
 TipoInstituicao=1 retorna dados por conglomerado prudencial.
 
-## 2. BCB SGS - Series Temporais (a implementar)
+## 2. BCB SGS - Series Temporais
 - **Acesso**: Biblioteca python-bcb
 - **Series**: CDI (codigo 12), Selic Meta (codigo 432)
 - **Formato**: JSON
 - **Frequencia**: Diaria
 
-## 3. BancoData.com.br (a implementar)
+## 3. BancoData.com.br
 - **URL**: https://bancodata.com.br/relatorio/master
 - **Metodo**: Web scraping (BeautifulSoup)
 - **Conteudo**: Indicadores consolidados, Basileia historico, ratings
 - **Origem dos dados**: IF.data do BCB (reprocessados)
 
-## 4. Noticias (a implementar)
+## 4. Noticias
 - **Fontes**: Folha de S.Paulo, Valor Economico, Agencia Brasil, Bloomberg
 - **Metodo**: Web scraping com BeautifulSoup
 - **Conteudo**: Titulo, data, resumo, URL
